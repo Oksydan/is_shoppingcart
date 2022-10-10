@@ -1,54 +1,64 @@
-{extends file='module:is_shoppingcart/views/template/front/modal-base.tpl'}
+{extends file='components/modal.tpl'}
 
-{block name='blockcart_modal_id'}id="blockcart-modal"{/block}
-{block name='blockcart_modal_title'}{l s='Product Successfully Added to Your Shopping Cart' d='Shop.Theme.Checkout'}{/block}
+{block name='modal_extra_attribues'}id="blockcart-modal"{/block}
+{block name='modal_title'}{l s='Product added to cart' d='Shop.Istheme'}{/block}
 
 
-{block name='blockcart_modal_body'}
-  <div class="row">
-    <div class="col-md-5 divide-right">
-      <div class="row">
-        <div class="col-md-6">
-          <img class="product-image" src="{$product.cover.medium.url}" alt="{$product.cover.legend}" title="{$product.cover.legend}" itemprop="image">
-        </div>
-        <div class="col-md-6">
-          <h6 class="h6 product-name">{$product.name}</h6>
-          <p class="product-price">{$product.price}</p>
-          {hook h='displayProductPriceBlock' product=$product type="unit_price"}
-          {foreach from=$product.attributes item="property_value" key="property"}
-          <span>{l s='%label%:' sprintf=['%label%' => $property] d='Shop.Theme.Global'}<strong> {$property_value}</strong></span><br>
-          {/foreach}
-          <span>{l s='Quantity:' d='Shop.Theme.Checkout'}&nbsp;<strong>{$product.cart_quantity}</strong></span>
-        </div>
-      </div>
+{block name='modal_body'}
+
+  <div class="cart-products p-0 mb-4">
+    <div class="cart-products__thumb">
+      {images_block webpEnabled=$webpEnabled}
+        <img
+          class="img-fluid rounded"
+          {generateImagesSources image=$product.default_image size='cart_default' lazyload=false}
+          alt="{$product.cover.legend}"
+          title="{$product.cover.legend}">
+      {/images_block}
     </div>
-    <div class="col-md-7">
-      <div class="cart-content">
-        {if $cart.products_count > 1}
-          <p class="cart-products-count">{l s='There are %products_count% items in your cart.' sprintf=['%products_count%' => $cart.products_count] d='Shop.Theme.Checkout'}</p>
-        {else}
-          <p class="cart-products-count">{l s='There is %product_count% item in your cart.' sprintf=['%product_count%' =>$cart.products_count] d='Shop.Theme.Checkout'}</p>
-        {/if}
-        <p><span class="label">{l s='Subtotal:' d='Shop.Theme.Checkout'}</span>&nbsp;<span class="value">{$cart.subtotals.products.value}</span></p>
-        <p><span>{l s='Shipping:' d='Shop.Theme.Checkout'}</span>&nbsp;<span class="value">{$cart.subtotals.shipping.value} {hook h='displayCheckoutSubtotalDetails' subtotal=$cart.subtotals.shipping}</span></p>
-
-        {if !$configuration.display_prices_tax_incl && $configuration.taxes_enabled}
-          <p><span>{$cart.totals.total.label}&nbsp;{$cart.labels.tax_short}</span>&nbsp;<span>{$cart.totals.total.value}</span></p>
-          <p class="product-total"><span class="label">{$cart.totals.total_including_tax.label}</span>&nbsp;<span class="value">{$cart.totals.total_including_tax.value}</span></p>
-        {else}
-          <p class="product-total"><span class="label">{$cart.totals.total.label}&nbsp;{if $configuration.taxes_enabled}{$cart.labels.tax_short}{/if}</span>&nbsp;<span class="value">{$cart.totals.total.value}</span></p>
-        {/if}
-
-        {if $cart.subtotals.tax}
-          <p class="product-tax">{l s='%label%:' sprintf=['%label%' => $cart.subtotals.tax.label] d='Shop.Theme.Global'}&nbsp;<span class="value">{$cart.subtotals.tax.value}</span></p>
-        {/if}
-
-      </div>
+    <div class="cart-products__desc">
+        <p class="h6 mb-2 font-sm">
+          {$product.name}
+        </p>
+        <div class="price price--sm">{$product.price}</div>
+        {hook h='displayProductPriceBlock' product=$product type="unit_price"}
     </div>
   </div>
+
+  <hr>
+
+  {if !empty($cart.subtotals.products.value)}
+    <div class="cart-summary-line mb-2">
+      <span class="label">{l s='Subtotal:' d='Shop.Theme.Checkout'}</span>
+      <span class="value">{$cart.subtotals.products.value}</span>
+    </div>
+  {/if}
+
+  {if !empty($cart.subtotals.shipping.value)}
+    <div class="cart-summary-line mb-2">
+      <span class="label">{l s='Shipping:' d='Shop.Theme.Checkout'}</span>
+      <span class="value">{$cart.subtotals.shipping.value} {hook h='displayCheckoutSubtotalDetails' subtotal=$cart.subtotals.shipping}</span>
+    </div>
+  {/if}
+
+  {if !$configuration.display_prices_tax_incl && $configuration.taxes_enabled}
+    <div class="cart-summary-line cart-total mb-2">
+      <span class="label">{$cart.totals.total.label}&nbsp;{$cart.labels.tax_short}</span>
+      <span class="value">{$cart.totals.total.value}</span>
+    </div>
+    <div class="cart-summary-line cart-total mb-0">
+      <span class="label">{$cart.totals.total_including_tax.label}</span>
+      <span class="value">{$cart.totals.total_including_tax.value}</span>
+    </div>
+  {else}
+    <div class="cart-summary-line cart-total mb-0">
+      <span class="label">{$cart.totals.total.label}&nbsp;{if $configuration.taxes_enabled}{$cart.labels.tax_short}{/if}</span>
+      <span class="value">{$cart.totals.total.value}</span>
+    </div>
+  {/if}
 {/block}
 
-{block name='blockcart_modal_footer'}
-  <button type="button" class="btn btn-secondary" data-dismiss="modal">{l s='Continue shopping' d='Shop.Theme.Actions'}</button>
-  <a href="{$cart_url}" class="btn btn-primary"><i class="material-icons rtl-no-flip">&#xE876;</i>{l s='Proceed to checkout' d='Shop.Theme.Actions'}</a>
+{block name='modal_footer'}
+  <a href="{$cart_url}" class="btn btn-primary btn-block">{l s='Proceed to checkout' d='Shop.Theme.Actions'}</a>
+  <button type="button" class="btn btn-text btn-block" data-dismiss="modal">{l s='Continue shopping' d='Shop.Theme.Actions'}</button>
 {/block}
