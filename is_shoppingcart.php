@@ -31,13 +31,13 @@ class is_Shoppingcart extends Module implements WidgetInterface
     /**
      * @var string Name of the module running on PS 1.6.x. Used for data migration.
      */
-    const PS_16_EQUIVALENT_MODULE = 'blockcart';
+    public const PS_16_EQUIVALENT_MODULE = 'blockcart';
 
     public function __construct()
     {
         $this->name = 'is_shoppingcart';
         $this->tab = 'front_office_features';
-        $this->version = '1.0.0';
+        $this->version = '1.1.0';
         $this->author = 'Igor Stępień';
         $this->need_instance = 0;
 
@@ -53,7 +53,7 @@ class is_Shoppingcart extends Module implements WidgetInterface
     /**
      * @return void
      */
-    public function hookHeader()
+    public function hookDisplayHeader()
     {
         if (Configuration::isCatalogMode()) {
             return;
@@ -185,7 +185,7 @@ class is_Shoppingcart extends Module implements WidgetInterface
 
         return
             parent::install()
-                && $this->registerHook('header')
+                && $this->registerHook('displayHeader')
                 && $this->registerHook('displayTop')
                 && $this->registerHook('displayBeforeBodyClosingTag')
                 && Configuration::updateValue('IS_BLOCK_CART_AJAX', 1);
