@@ -16,37 +16,48 @@
  * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
  * International Registered Trademark & Property of PrestaShop SA
  *}
-<span class="product-quantity">{$product.quantity}</span>
-<span class="product-name">{$product.name}</span>
-<span class="product-price">{$product.price}</span>
-<a  class="remove-from-cart"
-    rel="nofollow"
-    href="{$product.remove_from_cart_url}"
-    data-link-action="remove-from-cart"
->
-    {l s="Remove" d="Shop.Theme.Actions"}
-</a>
-{if $product.customizations|count}
-    <div class="customizations">
-        <ul>
-            {foreach from=$product.customizations item="customization"}
-                <li>
-                    <span class="product-quantity">{$customization.quantity}</span>
-                    <a href="{$customization.remove_from_cart_url}" class="remove-from-cart" rel="nofollow">{l s='Remove' d="Shop.Theme.Actions"}</a>
-                    <ul>
-                        {foreach from=$customization.fields item="field"}
-                            <li>
-                                <label>{$field.label}</label>
-                                {if $field.type == 'text'}
-                                    <span>{$field.text}</span>
-                                {elseif $field.type == 'image'}
-                                    <img src="{$field.image.small.url}">
-                                {/if}
-                            </li>
-                        {/foreach}
-                    </ul>
+
+<div class="cart-products">
+    <div class="cart-products__thumb">
+        {images_block webpEnabled=$webpEnabled}
+        <img {if $product.default_image}
+            {generateImagesSources image=$product.default_image size='cart_default' lazyload=false} {else}
+            src="{$urls.no_picture_image.bySize.cart_default.url}" {/if} alt="{$product.name|escape:'quotes'}"
+            class="img-fluid rounded" width="{$product.default_image.bySize.cart_default.width}"
+            height="{$product.default_image.bySize.cart_default.height}">
+        {/images_block}
+    </div>
+    <div class="cart-products__desc">
+        <p class="h6 mb-2 font-sm">
+            {$product.name}
+        </p>
+
+        <ul class="mb-2">
+            <li class="text-muted small">
+                <span>{l s='Quantity' d='Shop.Theme.Catalog'}:</span>
+                <span class="font-weight-bold">{$product.quantity}</span>
+            </li>
+            {foreach from=$product.attributes key="attribute" item="value"}
+                <li class="text-muted small">
+                    <span>{$attribute}:</span>
+                    <span class="font-weight-bold">{$value}</span>
                 </li>
             {/foreach}
         </ul>
+
+        <span class="price price--sm">
+            {$product.price}
+        </span>
     </div>
-{/if}
+    <div class="cart-products__remove">
+        <a class="remove-from-cart text-danger" rel="nofollow" href="{$product.remove_from_cart_url}"
+            data-link-action="delete-from-cart" data-id-product="{$product.id_product|escape:'javascript'}"
+            data-id-product-attribute="{$product.id_product_attribute|escape:'javascript'}"
+            data-id-customization="{$product.id_customization|escape:'javascript'}">
+            <span class="material-icons font-reset">
+                delete
+            </span>
+        </a>
+    </div>
+
+</div>
