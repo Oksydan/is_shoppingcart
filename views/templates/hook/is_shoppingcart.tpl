@@ -52,7 +52,7 @@
         {if $cart.products_count > 0}
           <div class="cart-dropdown__products pt-3 mb-3">
             {foreach from=$cart.products item=product}
-              {include 'module:is_shoppingcart/views/template/front/is_shoppingcart-product-line.tpl' product=$product}
+              {include 'module:is_shoppingcart/views/templates/front/is_shoppingcart-product-line.tpl' product=$product}
             {/foreach}
           </div>
 
