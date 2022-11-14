@@ -8,7 +8,7 @@ class ActionFrontControllerSetMedia extends AbstractHook
 {
     public function execute(array $params): void
     {
-        if (!\Configuration::isCatalogMode() && \Configuration::get('IS_BLOCK_CART_AJAX')) {
+        if (!\Configuration::isCatalogMode() && $this->shoppingCartConfiguration->isAjaxCartEnabled()) {
             $this->context->controller->registerJavascript(
                 'modules-is_shoppingcart',
                 "modules/{$this->module->name}/views/js/is_shoppingcart.js",

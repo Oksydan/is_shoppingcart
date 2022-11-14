@@ -12,6 +12,7 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
 }
 
 use Oksydan\IsShoppingcart\Hook\HookInterface;
+use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 class Is_shoppingcart extends Module
@@ -98,4 +99,8 @@ class Is_shoppingcart extends Module
         }
     }
 
+    public function getContent(): void
+    {
+        \Tools::redirectAdmin(SymfonyContainer::getInstance()->get('router')->generate('is_shoppingcart_controller'));
+    }
 }

@@ -9,12 +9,17 @@ services:
     arguments:
       - 'is_shoppingcart'
 
+  oksydan.is_shoppingcart.shopping_cart_configuration:
+    class: Oksydan\IsShoppingcart\Configuration\ShoppingCartConfiguration
+    public: true
+
   oksydan.is_shoppingcart.hook.abstract_hook:
     class: Oksydan\IsShoppingcart\Hook\AbstractHook
     public: true
     arguments:
       - '@oksydan.is_shoppingcart.module'
       - "@=service('prestashop.adapter.legacy.context').getContext()"
+      - '@oksydan.is_shoppingcart.shopping_cart_configuration'
 
   oksydan.is_shoppingcart.hook.abstract_display_hook:
     class: Oksydan\IsShoppingcart\Hook\AbstractDisplayHook
