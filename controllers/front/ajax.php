@@ -1,22 +1,7 @@
 <?php
-/**
- * 2007-2020 PrestaShop and Contributors
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
- * that is bundled with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/AFL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2020 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- * International Registered Trademark & Property of PrestaShop SA
- */
+
+use PrestaShop\PrestaShop\Adapter\Presenter\Cart\CartPresenter;
+
 class Is_ShoppingcartAjaxModuleFrontController extends ModuleFrontController
 {
     /**
@@ -36,7 +21,7 @@ class Is_ShoppingcartAjaxModuleFrontController extends ModuleFrontController
         $modal = null;
 
         if ($this->module instanceof Is_Shoppingcart && Tools::getValue('action') === 'add-to-cart') {
-            $modal = $this->module->renderModal(
+            $modal = $this->renderModal(
                 $this->context->cart,
                 (int) Tools::getValue('id_product'),
                 (int) Tools::getValue('id_product_attribute'),
@@ -46,9 +31,52 @@ class Is_ShoppingcartAjaxModuleFrontController extends ModuleFrontController
 
         ob_end_clean();
         header('Content-Type: application/json');
-        die(json_encode([
-            'preview' => $this->module instanceof Is_Shoppingcart ? $this->module->renderWidget(null, ['cart' => $this->context->cart]) : '',
+        $this->ajaxRender(json_encode([
+            'preview' => $this->module instanceof Is_Shoppingcart ? $this->module->hookDisplayTop(['cart' => $this->context->cart]) : '',
             'modal' => $modal,
         ]));
+    }
+
+    /**
+     * @param Cart $cart
+     * @param int $id_product
+     * @param int $id_product_attribute
+     * @param int $id_customization
+     *
+     * @return string
+     *
+     * @throws Exception
+     */
+    private function renderModal(Cart $cart, $id_product, $id_product_attribute, $id_customization)
+    {
+        $data = (new CartPresenter())->present($cart);
+        $product = null;
+
+        foreach ($data['products'] as $p) {
+            if ((int) $p['id_product'] == $id_product &&
+                (int) $p['id_product_attribute'] == $id_product_attribute &&
+                (int) $p['id_customization'] == $id_customization) {
+                $product = $p;
+                break;
+            }
+        }
+
+        $this->context->smarty->assign([
+            'product' => $product,
+            'cart' => $data,
+            'cart_url' => $this->context->link->getPageLink(
+                'cart',
+                null,
+                $this->context->language->id,
+                [
+                    'action' => 'show',
+                ],
+                false,
+                null,
+                true
+            ),
+        ]);
+
+        return $this->module->fetch("module:{$this->module->name}/views/templates/front/modal.tpl");
     }
 }

@@ -1,1 +1,17 @@
-.DS_STORE
+### PrestaShop cache ###
+config.xml
+config_*.xml
+
+### NPM ###
+node_modules/
+
+### Composer ###
+/vendor/*
+
+### Tests ###
+.php-cs-fixer.cache
+.phpstan_bootstrap_config.php
+tests/.env
+
+## Misc ###
+.DS_Store

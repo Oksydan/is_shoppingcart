@@ -1,286 +1,105 @@
 <?php
-/**
- * 2007-2020 PrestaShop and Contributors
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
- * that is bundled with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/AFL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2020 PrestaShop SA and Contributors
- * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
- * International Registered Trademark & Property of PrestaShop SA
- */
 
-use PrestaShop\PrestaShop\Adapter\Cart\CartPresenter;
+declare(strict_types=1);
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
+if (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require_once __DIR__ . '/vendor/autoload.php';
+}
 
-class is_Shoppingcart extends Module implements WidgetInterface
+use Oksydan\IsShoppingcart\Hook\HookInterface;
+use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+
+class Is_shoppingcart extends Module
 {
-    /**
-     * @var string Name of the module running on PS 1.6.x. Used for data migration.
-     */
-    public const PS_16_EQUIVALENT_MODULE = 'blockcart';
-
     public function __construct()
     {
         $this->name = 'is_shoppingcart';
         $this->tab = 'front_office_features';
-        $this->version = '1.2.0';
+        $this->version = '2.0.0';
         $this->author = 'Igor Stępień';
         $this->need_instance = 0;
 
         $this->bootstrap = true;
         parent::__construct();
 
-        $this->displayName = $this->trans('Shopping cart', [], 'Modules.Shoppingcart.Admin');
-        $this->description = $this->trans('Display a shopping cart icon on your pages and the number of items it contains.', [], 'Modules.Shoppingcart.Admin');
-        $this->ps_versions_compliancy = ['min' => '1.7.1.0', 'max' => _PS_VERSION_];
+        $this->displayName = $this->trans('Shopping cart', [], 'Modules.IsShoppingcart.Admin');
+        $this->description = $this->trans('Display a shopping cart icon on your pages and the number of items it contains.', [], 'Modules.IsShoppingcart.Admin');
+        $this->ps_versions_compliancy = ['min' => '8.0.0', 'max' => _PS_VERSION_];
         $this->controllers = ['ajax'];
     }
 
     /**
-     * @return void
+     * @return bool
      */
-    public function hookDisplayHeader()
+    public function install(): bool
     {
-        if (Configuration::isCatalogMode()) {
-            return;
-        }
+        return parent::install()
+            && $this->registerHook('displayTop')
+            && $this->registerHook('displayBeforeBodyClosingTag')
+            && $this->registerHook('actionFrontControllerSetMedia')
+        ;
+    }
 
-        if (Configuration::get('IS_BLOCK_CART_AJAX')) {
-            $this->context->controller->registerJavascript('modules-is_shoppingcart', 'modules/' . $this->name . '/views/js/is_shoppingcart.js', ['position' => 'bottom', 'priority' => 150]);
+    /**
+     * @return bool
+     */
+    public function uninstall(): bool
+    {
+        return parent::uninstall();
+    }
+
+    /** @param string $methodName */
+    public function __call($methodName, array $arguments)
+    {
+        if (str_starts_with($methodName, 'hook')) {
+            if ($hook = $this->getHookObject($methodName)) {
+                return $hook->execute(...$arguments);
+            }
+        } else {
+            return null;
         }
     }
 
     /**
-     * @return string
+     * @param string $methodName
+     *
+     * @return HookInterface|null
      */
-    private function getCartSummaryURL()
+    private function getHookObject($methodName)
     {
-        return $this->context->link->getPageLink(
-            'cart',
-            null,
-            $this->context->language->id,
-            [
-                'action' => 'show',
-            ],
-            false,
-            null,
-            true
+        $serviceName = sprintf(
+            'oksydan.is_shoppingcart.hook.%s',
+            \Tools::toUnderscoreCase(str_replace('hook', '', $methodName))
         );
+
+        $hook = $this->getService($serviceName);
+
+        return $hook instanceof HookInterface ? $hook : null;
     }
 
     /**
-     * @param string|null $hookName
-     * @param array<string,mixed> $params
+     * @template T
      *
-     * @return array<string,mixed>
-     */
-    public function getWidgetVariables($hookName, array $params)
-    {
-        $cart_url = $this->getCartSummaryURL();
-
-        return [
-            'cart' => (new CartPresenter())->present(isset($params['cart']) ? $params['cart'] : $this->context->cart),
-            'refresh_url' => $this->context->link->getModuleLink('is_shoppingcart', 'ajax', [], null, null, null, true),
-            'cart_url' => $cart_url,
-        ];
-    }
-
-    /**
-     * @param string|null $hookName
-     * @param array<string,mixed> $params
+     * @param class-string<T>|string $serviceName
      *
-     * @return string
+     * @return T|object|null
      */
-    public function renderWidget($hookName, array $params)
+    public function getService($serviceName)
     {
-        if (Configuration::isCatalogMode()) {
-            return '';
+        try {
+            return $this->get($serviceName);
+        } catch (ServiceNotFoundException $exception) {
+            return null;
         }
-
-        $this->smarty->assign($this->getWidgetVariables($hookName, $params));
-
-        return $this->fetch('module:is_shoppingcart/views/template/hook/is_shoppingcart.tpl');
     }
 
-    /**
-     * @return string
-     */
-    public function hookDisplayBeforeBodyClosingTag()
+    public function getContent(): void
     {
-        return $this->fetch('module:is_shoppingcart/views/template/hook/modal-fail.tpl');
-    }
-
-    /**
-     * @param Cart $cart
-     * @param int $id_product
-     * @param int $id_product_attribute
-     * @param int $id_customization
-     *
-     * @return string
-     *
-     * @throws Exception
-     */
-    public function renderModal(Cart $cart, $id_product, $id_product_attribute, $id_customization)
-    {
-        $data = (new CartPresenter())->present($cart);
-        $product = null;
-
-        foreach ($data['products'] as $p) {
-            if ((int) $p['id_product'] == $id_product &&
-                (int) $p['id_product_attribute'] == $id_product_attribute &&
-                (int) $p['id_customization'] == $id_customization) {
-                $product = $p;
-                break;
-            }
-        }
-
-        $this->smarty->assign([
-            'product' => $product,
-            'cart' => $data,
-            'cart_url' => $this->getCartSummaryURL(),
-        ]);
-
-        return $this->fetch('module:is_shoppingcart/views/template/front/modal.tpl');
-    }
-
-    /**
-     * @return string
-     */
-    public function getContent()
-    {
-        $output = '';
-        if (Tools::isSubmit('submitBlockCart')) {
-            $ajax = Tools::getValue('IS_BLOCK_CART_AJAX');
-            if ($ajax != 0 && $ajax != 1) {
-                $output .= $this->displayError($this->trans('Ajax: Invalid choice.', [], 'Modules.Shoppingcart.Admin'));
-            } else {
-                Configuration::updateValue('IS_BLOCK_CART_AJAX', (int) ($ajax));
-                Tools::redirectAdmin($this->context->link->getAdminLink('AdminModules') . '&configure=' . $this->name . '&conf=6');
-            }
-        }
-
-        return $output . $this->renderForm();
-    }
-
-    /**
-     * @return bool
-     */
-    public function install()
-    {
-        $this->uninstallPrestaShop16Module();
-
-        return
-            parent::install()
-                && $this->registerHook('displayHeader')
-                && $this->registerHook('displayTop')
-                && $this->registerHook('displayBeforeBodyClosingTag')
-                && Configuration::updateValue('IS_BLOCK_CART_AJAX', 1);
-    }
-
-    /**
-     * Migrate data from 1.6 equivalent module (if applicable), then uninstall
-     *
-     * @return bool
-     */
-    public function uninstallPrestaShop16Module()
-    {
-        if (!Module::isInstalled(self::PS_16_EQUIVALENT_MODULE)) {
-            return false;
-        }
-        $oldModule = Module::getInstanceByName(self::PS_16_EQUIVALENT_MODULE);
-        if ($oldModule) {
-            // This closure calls the parent class to prevent data to be erased
-            // It allows the new module to be configured without migration
-            $parentUninstallClosure = function () {
-                return parent::uninstall();
-            };
-            $parentUninstallClosure = $parentUninstallClosure->bindTo($oldModule, get_class($oldModule));
-            $parentUninstallClosure();
-        }
-
-        return true;
-    }
-
-    /**
-     * @return string
-     */
-    public function renderForm()
-    {
-        $fields_form = [
-            'form' => [
-                'legend' => [
-                    'title' => $this->trans('Settings', [], 'Admin.Global'),
-                    'icon' => 'icon-cogs',
-                ],
-                'input' => [
-                    [
-                        'type' => 'switch',
-                        'label' => $this->trans('Ajax cart', [], 'Modules.Shoppingcart.Admin'),
-                        'name' => 'IS_BLOCK_CART_AJAX',
-                        'is_bool' => true,
-                        'desc' => $this->trans('Activate Ajax mode for the cart (compatible with the default theme).', [], 'Modules.Shoppingcart.Admin'),
-                        'values' => [
-                            [
-                                'id' => 'active_on',
-                                'value' => 1,
-                                'label' => $this->trans('Yes', [], 'Admin.Global'),
-                            ],
-                            [
-                                'id' => 'active_off',
-                                'value' => 0,
-                                'label' => $this->trans('No', [], 'Admin.Global'),
-                            ],
-                        ],
-                    ],
-                ],
-                'submit' => [
-                    'title' => $this->trans('Save', [], 'Admin.Actions'),
-                ],
-            ],
-        ];
-
-        $helper = new HelperForm();
-        $helper->show_toolbar = false;
-        $helper->table = $this->table;
-        $lang = new Language((int) Configuration::get('PS_LANG_DEFAULT'));
-        $helper->default_form_language = $lang->id;
-        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
-
-        $helper->identifier = $this->identifier;
-        $helper->submit_action = 'submitBlockCart';
-        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) . '&configure=' . $this->name . '&tab_module=' . $this->tab
-        . '&module_name=' . $this->name;
-        $helper->token = Tools::getAdminTokenLite('AdminModules');
-        $helper->tpl_vars = [
-            'fields_value' => $this->getConfigFieldsValues(),
-            'languages' => $this->context->controller->getLanguages(),
-            'id_language' => $this->context->language->id,
-        ];
-
-        return $helper->generateForm([$fields_form]);
-    }
-
-    /**
-     * @return bool[]
-     */
-    public function getConfigFieldsValues()
-    {
-        return [
-            'IS_BLOCK_CART_AJAX' => (bool) Tools::getValue('IS_BLOCK_CART_AJAX', Configuration::get('IS_BLOCK_CART_AJAX')),
-        ];
+        \Tools::redirectAdmin(SymfonyContainer::getInstance()->get('router')->generate('is_shoppingcart_controller'));
     }
 }
