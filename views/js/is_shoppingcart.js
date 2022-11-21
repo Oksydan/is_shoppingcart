@@ -1,24 +1,25 @@
-$(document).ready(function () {
-  var $body = $('body');
+document.addEventListener('DOMContentLoaded', () => {
+  initShoppingCart();
+});
+
+function initShoppingCart() {
+  const body = document.querySelector('body');
 
   function bindEvents() {
-    $('.blockcart.dropdown').on('show.bs.dropdown', function () {
-      $body.addClass('header-dropdown-open block-cart-open');
+    const blockCart = document.querySelector('.js-blockcart');
+
+    // blockCart.addEventListener('show.bs.dropdown', () => { Change to vanilla js when bootstrap 5 is adopted
+    $(blockCart).on('show.bs.dropdown', () => {
+      body.classList.add('header-dropdown-open', 'block-cart-open');
     });
 
-    $('.blockcart.dropdown').on('hide.bs.dropdown', function (e) {
-      var $target;
-
-      if(typeof e.clickEvent !== 'undefined') {
-        $target = $(e.clickEvent.target);
-      } else {
-        $target = $(e.currentTarget);
-      }
-
-      if (!$target.hasClass('dropdown-close') && ($target.hasClass('keep-open') || $target.closest('.keep-open').length)) {
+    // blockCart.addEventListener('hide.bs.dropdown', (e) => { Change to vanilla js when bootstrap 5 is adopted
+    $(blockCart).on('hide.bs.dropdown', (e) => {
+      const target = e.target;
+      if (!target.classList.contains('dropdown-close') && (target.classList.contains('keep-open') || target.closest('.keep-open') || e.clickEvent && e.clickEvent.target.closest('.keep-open'))) {
         return false; // returning false should stop the dropdown from hiding.
       } else {
-        $body.removeClass('header-dropdown-open block-cart-open');
+        body.classList.remove('header-dropdown-open', 'block-cart-open');
         return true;
       }
     });
@@ -26,22 +27,18 @@ $(document).ready(function () {
 
   prestashop.blockcart = prestashop.blockcart || {};
 
-  var showModal = prestashop.blockcart.showModal || function (modal) {
-    $body.append(modal);
-    $body.one('click', '#blockcart-modal', function (event) {
-      if (event.target.id === 'blockcart-modal') {
-        $(event.target).remove();
-      }
-    });
-  };
+  const showModal = prestashop.blockcart.showModal || ((modal) => {
+    return;
+  })
 
   bindEvents();
 
   prestashop.on(
     'updateCart',
-    function (event) {
-      var refreshURL = $('.blockcart').data('refresh-url');
-      var requestData = {};
+    (event) => {
+      const refreshURL = document.querySelector('.js-blockcart').dataset.refreshUrl;
+      let requestData = {};
+
       if (event && event.reason && typeof event.resp !== 'undefined' && !event.resp.hasError) {
         requestData = {
           id_customization: event.reason.idCustomization,
@@ -51,32 +48,52 @@ $(document).ready(function () {
           ajax: 1,
         };
       }
+
+      requestData = Object.keys(requestData).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(requestData[key])).join('&')
+
       if (event && event.resp && event.resp.hasError) {
-        var $errorModal = $('#blockcart-error');
-        var $alertBlock = $('.js-blockcart-alert');
+        const errorModal = document.querySelector('#blockcart-error');
+        const alertBlock = document.querySelector('.js-blockcart-alert');
 
-        $alertBlock.html(event.resp.errors.join('<br/>'));
-        $errorModal.modal('show');
-        // prestashop.emit('showErrorNextToAddtoCartButton', { errorMessage: event.resp.errors.join('<br/>')});
+        alertBlock.innerHTML = event.resp.errors.join('<br/>');
+        // errorModal.modal('show'); Change to vanilla js when bootstrap 5 is adopted
+        $(errorModal).modal('show');
       }
-      $.post(refreshURL, requestData).then(function (resp) {
-        var html = $('<div />').append($.parseHTML(resp.preview));
-        $('.blockcart').replaceWith($(resp.preview).find('.blockcart'));
-        prestashop.emit('updatedBlockCart', resp);
 
-        if($body.hasClass('block-cart-open')) {
-          $('.blockcart.dropdown').find('[data-toggle="dropdown"]').trigger('click');
+      fetch(refreshURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: requestData
+      })
+      .then((resp) => resp.json())
+      .then((resp) => {
+
+        const previewHtml = new DOMParser().parseFromString(resp.preview, "text/html") .querySelector('.js-blockcart');
+
+        if (previewHtml) {
+          document.querySelector('.js-blockcart').replaceWith(previewHtml)
         }
-
-        bindEvents();
 
         if (resp.modal) {
           showModal(resp.modal);
         }
-        $('body').removeClass('cart-loading');
-      }).fail(function (resp) {
-        prestashop.emit('handleError', { eventType: 'updateShoppingCart', resp: resp });
-      });
-    }
-  );
-});
+
+        prestashop.emit('updatedBlockCart', resp);
+
+        if(body.classList.contains('block-cart-open')) {
+          const dropdown = body.querySelector('.js-blockcart [data-toggle="dropdown"]')
+          dropdown && dropdown.click()
+        }
+
+        bindEvents();
+
+        body.classList.remove('cart-loading')
+      })
+      .catch((resp) => {
+        prestashop.emit('handleError', { eventType: 'updateShoppingCart', resp: resp })
+      })
+
+  });
+}

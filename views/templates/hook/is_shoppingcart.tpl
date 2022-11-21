@@ -17,7 +17,7 @@
  * International Registered Trademark & Property of PrestaShop SA
  *}
 <div class="header-top__block header-top__block--cart col flex-grow-0">
-  <div class="blockcart cart-preview dropdown" data-refresh-url="{$refresh_url}">
+  <div class="js-blockcart blockcart cart-preview dropdown" data-refresh-url="{$refresh_url}">
     <a href="#" role="button" id="cartDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
       class="header-top__link d-lg-block d-none">
       <div class="header-top__icon-container">
@@ -45,9 +45,9 @@
           <p class="h5 mb-0 mr-2">
             {l s='Your cart' d='Shop.Istheme'}
           </p>
-          <span class="cart-dropdown__close dropdown-close ml-auto cursor-pointer">
-            ×
-          </span>
+          <a data-toggle="dropdown" href="#" class="cart-dropdown__close dropdown-close ml-auto cursor-pointer text-decoration-none">
+            <i class="material-icons d-block">close</i>
+          </a>
         </div>
         {if $cart.products_count > 0}
           <div class="cart-dropdown__products pt-3 mb-3">
