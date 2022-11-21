@@ -14,7 +14,7 @@ abstract class AbstractHook implements HookInterface
     protected $context;
     protected $shoppingCartConfiguration;
 
-    public function __construct(Module $module, Context $context, ShoppingCartConfiguration $shoppingCartConfiguration )
+    public function __construct(Module $module, Context $context, ShoppingCartConfiguration $shoppingCartConfiguration)
     {
         $this->module = $module;
         $this->context = $context;

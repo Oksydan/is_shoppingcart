@@ -14,7 +14,7 @@ class ActionFrontControllerSetMedia extends AbstractHook
                 "modules/{$this->module->name}/views/js/is_shoppingcart.js",
                 [
                     'position' => 'bottom',
-                    'priority' => 150
+                    'priority' => 150,
                 ]
             );
         }

@@ -37,8 +37,7 @@ class Is_ShoppingcartAjaxModuleFrontController extends ModuleFrontController
         ]));
     }
 
-
-        /**
+    /**
      * @param Cart $cart
      * @param int $id_product
      * @param int $id_product_attribute
