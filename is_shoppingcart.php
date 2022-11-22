@@ -13,6 +13,7 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
 use Oksydan\IsShoppingcart\Hook\HookInterface;
 use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+use Oksydan\IsShoppingcart\Configuration\ShoppingCartConfiguration;
 
 class Is_shoppingcart extends Module
 {
@@ -39,10 +40,26 @@ class Is_shoppingcart extends Module
     public function install(): bool
     {
         return parent::install()
-            && $this->registerHook('displayTop')
+            && $this->installHooks()
+            && $this->installConfiguration();
+    }
+
+    /**
+     * @return bool
+     */
+    public function installHooks(): bool
+    {
+        return $this->registerHook('displayTop')
             && $this->registerHook('displayBeforeBodyClosingTag')
-            && $this->registerHook('actionFrontControllerSetMedia')
-        ;
+            && $this->registerHook('actionFrontControllerSetMedia');
+    }
+
+    /**
+     * @return bool
+     */
+    public function installConfiguration(): bool
+    {
+        return \Configuration::updateValue(ShoppingCartConfiguration::IS_BLOCK_CART_AJAX, 1);
     }
 
     /**
