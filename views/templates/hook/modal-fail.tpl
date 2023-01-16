@@ -1,6 +1,6 @@
 {extends file='components/modal.tpl'}
 
-{block name='modal_title'}{l s='Something went wrong' d='Shop.Theme.Checkout'}{/block}
+{block name='modal_title'}{l s='Something went wrong' d='Modules.Isshoppingcart.Modalfail'}{/block}
 {block name='modal_extra_attribues'}id="blockcart-error"{/block}
 
 {block name='modal_body'}

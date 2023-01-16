@@ -69,7 +69,7 @@
 
         {else}
           <div class="alert alert-warning">
-            {l s='Unfortunately your basket is empty' d='Shop.Istheme'}
+            {l s='Unfortunately your basket is empty' d='Modules.Isshoppingcart.Isshoppingcart'}
           </div>
         {/if}
       </div>
