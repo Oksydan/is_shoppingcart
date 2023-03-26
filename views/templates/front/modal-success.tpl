@@ -1,7 +1,7 @@
 {extends file='components/modal.tpl'}
 
 {block name='modal_extra_attribues'}id="blockcart-modal"{/block}
-{block name='modal_title'}{l s='Product added to cart' d='Shop.Istheme'}{/block}
+{block name='modal_title'}{l s='Product added to cart' d='Modules.Isshoppingcart.Modalsuccess'}{/block}
 
 
 {block name='modal_body'}
@@ -29,14 +29,14 @@
 
   {if !empty($cart.subtotals.products.value)}
     <div class="cart-summary-line mb-2">
-      <span class="label">{l s='Subtotal:' d='Shop.Theme.Checkout'}</span>
+      <span class="label">{l s='Subtotal:' d='Modules.Isshoppingcart.Modalsuccess'}</span>
       <span class="value">{$cart.subtotals.products.value}</span>
     </div>
   {/if}
 
   {if !empty($cart.subtotals.shipping.value)}
     <div class="cart-summary-line mb-2">
-      <span class="label">{l s='Shipping:' d='Shop.Theme.Checkout'}</span>
+      <span class="label">{l s='Shipping:' d='Modules.Isshoppingcart.Modalsuccess'}</span>
       <span class="value">{$cart.subtotals.shipping.value} {hook h='displayCheckoutSubtotalDetails' subtotal=$cart.subtotals.shipping}</span>
     </div>
   {/if}
