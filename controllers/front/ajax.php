@@ -10,14 +10,12 @@ class Is_ShoppingcartAjaxModuleFrontController extends ModuleFrontController
     public $ssl = true;
 
     /**
-     * @see FrontController::initContent()
+     * @see FrontController::displayAjax()
      *
      * @return void
      */
-    public function initContent()
+    public function displayAjax(): void
     {
-        parent::initContent();
-
         $modal = null;
 
         if ($this->module instanceof Is_Shoppingcart && Tools::getValue('action') === 'add-to-cart') {
@@ -29,8 +27,6 @@ class Is_ShoppingcartAjaxModuleFrontController extends ModuleFrontController
             );
         }
 
-        ob_end_clean();
-        header('Content-Type: application/json');
         $this->ajaxRender(json_encode([
             'preview' => $this->module instanceof Is_Shoppingcart ? $this->module->hookDisplayTop(['cart' => $this->context->cart]) : '',
             'modal' => $modal,
