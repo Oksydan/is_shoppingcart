@@ -10,10 +10,10 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
     require_once __DIR__ . '/vendor/autoload.php';
 }
 
+use Oksydan\IsShoppingcart\Configuration\ShoppingCartConfiguration;
 use Oksydan\IsShoppingcart\Hook\HookInterface;
 use PrestaShop\PrestaShop\Adapter\SymfonyContainer;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-use Oksydan\IsShoppingcart\Configuration\ShoppingCartConfiguration;
 
 class Is_shoppingcart extends Module
 {
