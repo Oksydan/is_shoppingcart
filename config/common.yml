@@ -35,8 +35,3 @@ services:
     class: Oksydan\IsShoppingcart\Hook\DisplayBeforeBodyClosingTag
     parent: 'oksydan.is_shoppingcart.hook.abstract_display_hook'
     public: true
-
-  oksydan.is_shoppingcart.hook.action_front_controller_set_media:
-    class: Oksydan\IsShoppingcart\Hook\ActionFrontControllerSetMedia
-    parent: 'oksydan.is_shoppingcart.hook.abstract_hook'
-    public: true
