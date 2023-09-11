@@ -21,17 +21,22 @@ class Is_shoppingcart extends Module
     {
         $this->name = 'is_shoppingcart';
         $this->tab = 'front_office_features';
-        $this->version = '3.0.0';
+        $this->version = '3.0.1';
         $this->author = 'Igor Stępień';
         $this->need_instance = 0;
 
         $this->bootstrap = true;
         parent::__construct();
 
-        $this->displayName = $this->trans('Shopping cart', [], 'Modules.IsShoppingcart.Admin');
-        $this->description = $this->trans('Display a shopping cart icon on your pages and the number of items it contains.', [], 'Modules.IsShoppingcart.Admin');
+        $this->displayName = $this->trans('Shopping cart', [], 'Modules.Isshoppingcart.Admin');
+        $this->description = $this->trans('Display a shopping cart icon on your pages and the number of items it contains.', [], 'Modules.Isshoppingcart.Admin');
         $this->ps_versions_compliancy = ['min' => '8.0.0', 'max' => _PS_VERSION_];
         $this->controllers = ['ajax'];
+    }
+
+    public function isUsingNewTranslationSystem(): bool
+    {
+        return true;
     }
 
     /**
