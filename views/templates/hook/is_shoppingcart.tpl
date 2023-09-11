@@ -43,7 +43,7 @@
         </div>
         <div class="cart-dropdown__title d-flex align-items-center mb-3">
           <p class="h5 mb-0 mr-2">
-            {l s='Your cart' d='Shop.Istheme'}
+            {l s='Your cart' d='Modules.Isshoppingcart.Isshoppingcart'}
           </p>
           <a data-toggle="dropdown" href="#" class="cart-dropdown__close dropdown-close ml-auto cursor-pointer text-decoration-none">
             <i class="material-icons d-block">close</i>
