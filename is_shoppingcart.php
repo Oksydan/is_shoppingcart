@@ -21,7 +21,7 @@ class Is_shoppingcart extends Module
     {
         $this->name = 'is_shoppingcart';
         $this->tab = 'front_office_features';
-        $this->version = '3.0.0';
+        $this->version = '3.0.1';
         $this->author = 'Igor Stępień';
         $this->need_instance = 0;
 
