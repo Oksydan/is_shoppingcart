@@ -11,7 +11,7 @@
       {images_block webpEnabled=$webpEnabled}
         <img
           class="img-fluid rounded"
-          {generateImagesSources image=$product.default_image size='cart_default' lazyload=false}
+          {generateImagesSources image=$product.default_image size='cart_default'}
           alt="{$product.cover.legend}"
           title="{$product.cover.legend}">
       {/images_block}

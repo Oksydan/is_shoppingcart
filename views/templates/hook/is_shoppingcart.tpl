@@ -18,8 +18,15 @@
  *}
 <div class="header-top__block header-top__block--cart col flex-grow-0">
   <div class="js-blockcart blockcart cart-preview dropdown" data-refresh-url="{$refresh_url}">
-    <a href="#" role="button" id="cartDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-      class="header-top__link d-lg-block d-none">
+    <a
+      href="#"
+      role="button"
+      id="cartDropdown"
+      data-bs-toggle="dropdown"
+      aria-haspopup="true"
+      aria-expanded="false"
+      class="header-top__link d-lg-block d-none"
+    >
       <div class="header-top__icon-container">
         <span class="header-top__icon material-icons">shopping_basket</span>
         <span class="header-top__badge {if $cart.products_count > 9}header-top__badge--smaller{/if}">
@@ -62,7 +69,8 @@
           </div>
 
           <div class="mt-3">
-            <a href="{$cart_url}" class="btn btn-sm btn-primary btn-block dropdown-close">
+            <a href="{$cart_url}"
+               class="btn btn-sm btn-primary d-block w-100 text-center dropdown-close">
               {l s='Proceed to checkout' d='Shop.Theme.Actions'}
             </a>
           </div>
