@@ -20,11 +20,16 @@
 <div class="cart-products">
     <div class="cart-products__thumb">
         {images_block webpEnabled=$webpEnabled}
-        <img {if $product.default_image}
-            {generateImagesSources image=$product.default_image size='cart_default' lazyload=false} {else}
-            src="{$urls.no_picture_image.bySize.cart_default.url}" {/if} alt="{$product.name|escape:'quotes'}"
-            class="img-fluid rounded" width="{$product.default_image.bySize.cart_default.width}"
-            height="{$product.default_image.bySize.cart_default.height}">
+        <img
+          {if $product.default_image}
+            {generateImagesSources image=$product.default_image size='cart_default'}
+          {else}
+            src="{$urls.no_picture_image.bySize.cart_default.url}"
+          {/if}
+          alt="{$product.name|escape:'quotes'}"
+          class="img-fluid rounded"
+          width="{$product.default_image.bySize.cart_default.width}"
+          height="{$product.default_image.bySize.cart_default.height}">
         {/images_block}
     </div>
     <div class="cart-products__desc">
