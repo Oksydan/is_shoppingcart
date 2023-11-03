@@ -5,7 +5,7 @@ function initShoppingCart() {
     // blockCart.addEventListener('show.bs.dropdown', () => { Change to vanilla js when bootstrap 5 is adopted
     eventHandlerOn(blockCart, 'show.bs.dropdown', () => {
       document.body.classList.add('header-dropdown-open', 'block-cart-open');
-    })
+    });
 
     // blockCart.addEventListener('hide.bs.dropdown', (e) => { Change to vanilla js when bootstrap 5 is adopted
     eventHandlerOn(blockCart, 'hide.bs.dropdown', (e) => {
@@ -17,14 +17,11 @@ function initShoppingCart() {
       }
       document.body.classList.remove('header-dropdown-open', 'block-cart-open');
       return true;
-    })
-  }
+    });
+  };
 
   const showModal = (modalHtml) => {
-    const getBlockCartModalElement = () =>  document.querySelector('#blockcart-modal');
-    const getBlockCartModalInstance = () => {
-      return bootstrap.Modal.getOrCreateInstance(getBlockCartModalInstance());
-    }
+    const getBlockCartModalElement = () => document.querySelector('#blockcart-modal');
 
     const currentModal = getBlockCartModalElement();
 
@@ -41,7 +38,7 @@ function initShoppingCart() {
     });
 
     bootstrap.Modal.getOrCreateInstance(newModal).show();
-  }
+  };
 
   bindEvents();
 
@@ -49,9 +46,9 @@ function initShoppingCart() {
     const errorModal = document.querySelector('#blockcart-error');
     const alertBlock = document.querySelector('.js-blockcart-alert');
 
-    alertBlock.innerHTML = event.resp.errors.join('<br/>');
+    alertBlock.innerHTML = resp.errors.join('<br/>');
     bootstrap.Modal.getOrCreateInstance(errorModal).show();
-  }
+  };
 
   const handleUpdateCartBlock = (resp) => {
     const previewHtml = parseToHtml(resp.preview).querySelector('.js-blockcart');
@@ -77,7 +74,7 @@ function initShoppingCart() {
     bindEvents();
 
     document.body.classList.remove('cart-loading');
-  }
+  };
 
   const handleUpdateCart = (event) => {
     const refreshURL = document.querySelector('.js-blockcart')?.dataset?.refreshUrl;
@@ -87,7 +84,7 @@ function initShoppingCart() {
     }
 
     if (event && event.resp && event.resp.hasError) {
-      handleModalErrorToggle(event.resp)
+      handleModalErrorToggle(event.resp);
       return;
     }
 
@@ -104,11 +101,11 @@ function initShoppingCart() {
     request
       .query(requestData)
       .post()
-      .json(handleUpdateCart)
+      .json(handleUpdateCartBlock)
       .error((resp) => {
         prestashop.emit('handleError', { eventType: 'updateShoppingCart', resp });
       });
-  }
+  };
 
   prestashop.on('updateCart', handleUpdateCart);
 }
