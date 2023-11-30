@@ -12,6 +12,8 @@ final class ShoppingCartConfigurationHandler extends AbstractMultistoreConfigura
 {
     private const CONFIGURATION_FIELDS = [
         'ajaxCartEnabled',
+        'notificationType',
+        'previewType',
     ];
 
     /**
@@ -21,7 +23,9 @@ final class ShoppingCartConfigurationHandler extends AbstractMultistoreConfigura
     {
         return (new OptionsResolver())
             ->setDefined(self::CONFIGURATION_FIELDS)
-            ->setAllowedTypes('ajaxCartEnabled', 'bool');
+            ->setAllowedTypes('ajaxCartEnabled', 'bool')
+            ->setAllowedTypes('notificationType', 'string')
+            ->setAllowedTypes('previewType', 'string');
     }
 
     /**
@@ -32,7 +36,21 @@ final class ShoppingCartConfigurationHandler extends AbstractMultistoreConfigura
         $return = [];
         $shopConstraint = $this->getShopConstraint();
 
-        $return['ajaxCartEnabled'] = $this->configuration->get(ShoppingCartConfiguration::IS_BLOCK_CART_AJAX, null, $shopConstraint);
+        $return['ajaxCartEnabled'] = $this->configuration->get(
+            ShoppingCartConfiguration::IS_BLOCK_CART_AJAX,
+            null,
+            $shopConstraint
+        );
+        $return['notificationType'] = $this->configuration->get(
+            ShoppingCartConfiguration::IS_CART_NOTIFICATION_TYPE,
+            null,
+            $shopConstraint
+        );
+        $return['previewType'] = $this->configuration->get(
+            ShoppingCartConfiguration::IS_CART_PREVIEW_TYPE,
+            null,
+            $shopConstraint
+        );
 
         return $return;
     }
@@ -47,6 +65,20 @@ final class ShoppingCartConfigurationHandler extends AbstractMultistoreConfigura
         $this->updateConfigurationValue(
             ShoppingCartConfiguration::IS_BLOCK_CART_AJAX,
             'ajaxCartEnabled',
+            $configuration,
+            $shopConstraint
+        );
+
+        $this->updateConfigurationValue(
+            ShoppingCartConfiguration::IS_CART_NOTIFICATION_TYPE,
+            'notificationType',
+            $configuration,
+            $shopConstraint
+        );
+
+        $this->updateConfigurationValue(
+            ShoppingCartConfiguration::IS_CART_PREVIEW_TYPE,
+            'previewType',
             $configuration,
             $shopConstraint
         );
