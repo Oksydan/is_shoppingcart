@@ -30,7 +30,7 @@ class Is_shoppingcart extends Module
 
         $this->displayName = $this->trans('Shopping cart', [], 'Modules.Isshoppingcart.Admin');
         $this->description = $this->trans('Display a shopping cart icon on your pages and the number of items it contains.', [], 'Modules.Isshoppingcart.Admin');
-        $this->ps_versions_compliancy = ['min' => '8.0.0', 'max' => _PS_VERSION_];
+        $this->ps_versions_compliancy = ['min' => '8.1.0', 'max' => _PS_VERSION_];
         $this->controllers = ['ajax'];
     }
 
@@ -95,8 +95,8 @@ class Is_shoppingcart extends Module
     private function getHookObject($methodName)
     {
         $serviceName = sprintf(
-            'oksydan.is_shoppingcart.hook.%s',
-            \Tools::toUnderscoreCase(str_replace('hook', '', $methodName))
+            'Oksydan\IsShoppingcart\Hook\%s',
+            ucwords(str_replace('hook', '', $methodName))
         );
 
         $hook = $this->getService($serviceName);

@@ -29,3 +29,8 @@
   </div>
 {% endblock %}
 
+
+{% block javascripts %}
+  {{ parent() }}
+  <script src="{{ asset('../modules/is_shoppingcart/views/js/admin/form.js') }}"></script>
+{% endblock %}

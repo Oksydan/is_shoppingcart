@@ -2,16 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Oksydan\IsShoppingcart\Form\DataConfiguration;
+namespace Oksydan\IsShoppingcart\Form\DataHandler;
 
 use Oksydan\IsShoppingcart\Configuration\ShoppingCartConfiguration;
 use PrestaShop\PrestaShop\Core\Configuration\AbstractMultistoreConfiguration;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * Handles configuration data for demo multistore configuration options.
- */
-final class ShoppingCartDataConfiguration extends AbstractMultistoreConfiguration
+final class ShoppingCartConfigurationHandler extends AbstractMultistoreConfiguration
 {
     private const CONFIGURATION_FIELDS = [
         'ajaxCartEnabled',
@@ -46,7 +43,13 @@ final class ShoppingCartDataConfiguration extends AbstractMultistoreConfiguratio
     public function updateConfiguration(array $configuration): array
     {
         $shopConstraint = $this->getShopConstraint();
-        $this->updateConfigurationValue(ShoppingCartConfiguration::IS_BLOCK_CART_AJAX, 'ajaxCartEnabled', $configuration, $shopConstraint);
+
+        $this->updateConfigurationValue(
+            ShoppingCartConfiguration::IS_BLOCK_CART_AJAX,
+            'ajaxCartEnabled',
+            $configuration,
+            $shopConstraint
+        );
 
         return [];
     }

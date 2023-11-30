@@ -9,29 +9,6 @@ services:
     arguments:
       - 'is_shoppingcart'
 
-  oksydan.is_shoppingcart.shopping_cart_configuration:
-    class: Oksydan\IsShoppingcart\Configuration\ShoppingCartConfiguration
-    public: true
-
-  oksydan.is_shoppingcart.hook.abstract_hook:
-    class: Oksydan\IsShoppingcart\Hook\AbstractHook
-    public: true
-    arguments:
-      - '@oksydan.is_shoppingcart.module'
-      - "@=service('prestashop.adapter.legacy.context').getContext()"
-      - '@oksydan.is_shoppingcart.shopping_cart_configuration'
-
-  oksydan.is_shoppingcart.hook.abstract_display_hook:
-    class: Oksydan\IsShoppingcart\Hook\AbstractDisplayHook
-    parent: 'oksydan.is_shoppingcart.hook.abstract_hook'
-    public: true
-
-  oksydan.is_shoppingcart.hook.display_top:
-    class: Oksydan\IsShoppingcart\Hook\DisplayTop
-    parent: 'oksydan.is_shoppingcart.hook.abstract_display_hook'
-    public: true
-
-  oksydan.is_shoppingcart.hook.display_before_body_closing_tag:
-    class: Oksydan\IsShoppingcart\Hook\DisplayBeforeBodyClosingTag
-    parent: 'oksydan.is_shoppingcart.hook.abstract_display_hook'
-    public: true
+  oksydan.is_shoppingcart.context:
+    class: Context
+    factory: [ '\Context', getContext ]

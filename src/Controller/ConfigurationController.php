@@ -9,15 +9,16 @@ use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class IsShoppingCartController extends FrameworkBundleAdminController
+class ConfigurationController extends FrameworkBundleAdminController
 {
     public function index(): Response
     {
-        $configurationForm = $this->get('oksydan.is_shoppingcart.configuration.form_handler')->getForm();
+        $formHandler = $this->get('oksydan.is_shoppingcart.configuration.form_handler');
+        $form = $formHandler->getForm();
 
         return $this->render('@Modules/is_shoppingcart/views/templates/admin/index.html.twig', [
             'translationDomain' => TranslationDomains::TRANSLATION_DOMAIN_ADMIN,
-            'configurationForm' => $configurationForm->createView(),
+            'configurationForm' => $form->createView(),
             'help_link' => false,
         ]);
     }
@@ -31,7 +32,9 @@ class IsShoppingCartController extends FrameworkBundleAdminController
     {
         $redirectResponse = $this->redirectToRoute('is_shoppingcart_controller');
 
-        $form = $this->get('oksydan.is_shoppingcart.configuration.form_handler')->getForm();
+        $formHandler = $this->get('oksydan.is_shoppingcart.configuration.form_handler');
+        $form = $formHandler->getForm();
+
         $form->handleRequest($request);
 
         if (!$form->isSubmitted()) {
@@ -40,9 +43,9 @@ class IsShoppingCartController extends FrameworkBundleAdminController
 
         if ($form->isValid()) {
             $data = $form->getData();
-            $saveErrors = $this->get('oksydan.is_shoppingcart.configuration.form_handler')->save($data);
+            $saveErrors = $formHandler->save($data);
 
-            if (0 === count($saveErrors)) {
+            if (!$saveErrors || 0 === count($saveErrors)) {
                 $this->addFlash('success', $this->trans('Successful update.', 'Admin.Notifications.Success'));
 
                 return $redirectResponse;

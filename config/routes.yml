@@ -2,10 +2,10 @@ is_shoppingcart_controller:
     path: /is_shoppingcart/configuration
     methods: [GET]
     defaults:
-        _controller: 'Oksydan\IsShoppingcart\Controller\IsShoppingCartController::index'
+        _controller: 'Oksydan\IsShoppingcart\Controller\ConfigurationController::index'
 
 is_shoppingcart_controller_configuration_save:
     path: /is_shoppingcart/configuration
     methods: [POST, PATCH]
     defaults:
-        _controller: 'Oksydan\IsShoppingcart\Controller\IsShoppingCartController::saveConfiguration'
+        _controller: 'Oksydan\IsShoppingcart\Controller\ConfigurationController::saveConfiguration'

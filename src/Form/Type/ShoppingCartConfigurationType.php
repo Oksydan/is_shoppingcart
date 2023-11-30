@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Oksydan\IsShoppingcart\Form;
+namespace Oksydan\IsShoppingcart\Form\Type;
 
 use Oksydan\IsShoppingcart\Configuration\ShoppingCartConfiguration;
 use Oksydan\IsShoppingcart\Translations\TranslationDomains;
@@ -10,9 +10,17 @@ use PrestaShopBundle\Form\Admin\Type\MultistoreConfigurationType;
 use PrestaShopBundle\Form\Admin\Type\SwitchType;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ImageSliderConfigurationType extends TranslatorAwareType
+class ShoppingCartConfigurationType extends TranslatorAwareType
 {
+    public function __construct(
+        TranslatorInterface $translator,
+        array $locales
+    ) {
+        parent::__construct($translator, $locales);
+    }
+
     /**
      * {@inheritdoc}
      */

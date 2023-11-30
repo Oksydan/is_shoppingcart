@@ -4,37 +4,27 @@ imports:
 services:
   _defaults:
     public: true
+    autowire: true
+    autoconfigure: true
+    bind:
+      $module: '@oksydan.is_shoppingcart.module'
+      $context: '@oksydan.is_shoppingcart.context'
+      $shopContext: '@prestashop.adapter.shop.context'
+      $multistoreFeature: '@prestashop.adapter.multistore_feature'
+      $locales: '@=service("prestashop.adapter.legacy.context").getLanguages()'
 
-  # Controller
-  Oksydan\IsShoppingcart\Controller\IsShoppingCartController:
-    public: true
-    class: Oksydan\IsShoppingcart\Controller\IsShoppingCartController
-
-  # config form
-  oksydan.is_shoppingcart.configuration:
-    class: 'Oksydan\IsShoppingcart\Form\DataConfiguration\ShoppingCartDataConfiguration'
-    arguments:
-      - '@prestashop.adapter.legacy.configuration'
-      - '@prestashop.adapter.shop.context'
-      - '@prestashop.adapter.multistore_feature'
-
-  oksydan.is_shoppingcart.configuration.form_provider:
-    class: 'Oksydan\IsShoppingcart\Form\Provider\ShoppingCartConfigurationFormDataProvider'
-    arguments:
-      - '@oksydan.is_shoppingcart.configuration'
+  Oksydan\IsShoppingcart\:
+    resource: '../../src/*'
+    exclude:
+      - '../../src/{Controller}'
+      - '../../src/index.php'
+      - '../../src/*/index.php'
 
   oksydan.is_shoppingcart.configuration.form_handler:
     class: 'PrestaShop\PrestaShop\Core\Form\Handler'
     arguments:
       - '@form.factory'
       - '@prestashop.core.hook.dispatcher'
-      - '@oksydan.is_shoppingcart.configuration.form_provider'
-      - 'Oksydan\IsShoppingcart\Form\ImageSliderConfigurationType'
+      - '@Oksydan\IsShoppingcart\Form\Provider\ShoppingCartConfigurationFormDataProvider'
+      - 'Oksydan\IsShoppingcart\Form\Type\ShoppingCartConfigurationType'
       - 'ConfigurationForm'
-
-  oksydan.is_shoppingcart.form.configuration_type:
-    class: 'Oksydan\IsShoppingcart\Form\ImageSliderConfigurationType'
-    parent: 'form.type.translatable.aware'
-    public: true
-    tags:
-      - { name: form.type }
