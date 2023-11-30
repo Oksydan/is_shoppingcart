@@ -19,8 +19,7 @@ class PreviewTypeChoiceProvider implements FormChoiceProviderInterface
 
     public function __construct(
         TranslatorInterface $translator
-    )
-    {
+    ) {
         $this->translator = $translator;
     }
 
