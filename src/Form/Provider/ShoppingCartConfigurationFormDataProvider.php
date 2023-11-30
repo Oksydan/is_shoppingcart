@@ -4,37 +4,31 @@ declare(strict_types=1);
 
 namespace Oksydan\IsShoppingcart\Form\Provider;
 
-use PrestaShop\PrestaShop\Core\Configuration\DataConfigurationInterface;
+use Oksydan\IsShoppingcart\Form\DataHandler\ShoppingCartConfigurationHandler;
 use PrestaShop\PrestaShop\Core\Form\FormDataProviderInterface;
 
 class ShoppingCartConfigurationFormDataProvider implements FormDataProviderInterface
 {
     /**
-     * @var DataConfigurationInterface
+     * @var ShoppingCartConfigurationHandler
      */
-    private $shoppingCartConfigurationDataConfiguration;
+    private ShoppingCartConfigurationHandler $shoppingCartConfigurationDataConfiguration;
 
     /**
-     * @param DataConfigurationInterface $shoppingCartConfigurationDataConfiguration
+     * @param ShoppingCartConfigurationHandler $shoppingCartConfigurationDataConfiguration
      */
-    public function __construct(DataConfigurationInterface $shoppingCartConfigurationDataConfiguration)
+    public function __construct(ShoppingCartConfigurationHandler $shoppingCartConfigurationDataConfiguration)
     {
         $this->shoppingCartConfigurationDataConfiguration = $shoppingCartConfigurationDataConfiguration;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): array
     {
         return $this->shoppingCartConfigurationDataConfiguration->getConfiguration();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setData(array $data): array
+    public function setData(array $data)
     {
-        return $this->shoppingCartConfigurationDataConfiguration->updateConfiguration($data);
+        $this->shoppingCartConfigurationDataConfiguration->updateConfiguration($data);
     }
 }
