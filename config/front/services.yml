@@ -4,7 +4,7 @@ imports:
 
 services:
   _defaults:
-    public: true
+    public: false
     autowire: true
     autoconfigure: true
     bind:

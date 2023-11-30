@@ -3,7 +3,7 @@ imports:
 
 services:
   _defaults:
-    public: true
+    public: false
     autowire: true
     autoconfigure: true
     bind:
@@ -22,6 +22,7 @@ services:
 
   oksydan.is_shoppingcart.configuration.form_handler:
     class: 'PrestaShop\PrestaShop\Core\Form\Handler'
+    public: true
     arguments:
       - '@form.factory'
       - '@prestashop.core.hook.dispatcher'
