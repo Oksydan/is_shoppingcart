@@ -1,24 +1,14 @@
-function initShoppingCart() {
-  const bindEvents = () => {
-    const blockCart = document.querySelector('.js-blockcart');
+import selectorsMap from './selectors/selectorsMap';
+import closePreviewDropdownHandler from './handler/closePreviewDropdownHandler';
+import updateCartHandler from "./handler/updateCartHandler";
 
-    // blockCart.addEventListener('show.bs.dropdown', () => { Change to vanilla js when bootstrap 5 is adopted
-    eventHandlerOn(blockCart, 'show.bs.dropdown', () => {
-      document.body.classList.add('header-dropdown-open', 'block-cart-open');
-    });
-
-    // blockCart.addEventListener('hide.bs.dropdown', (e) => { Change to vanilla js when bootstrap 5 is adopted
-    eventHandlerOn(blockCart, 'hide.bs.dropdown', (e) => {
-      const { target } = e;
-      if (!target.classList.contains('dropdown-close')
-        && (target.classList.contains('keep-open') || target.closest('.keep-open')
-          || (e.clickEvent && e.clickEvent.target.closest('.keep-open')))) {
-        return false; // returning false should stop the dropdown from hiding.
-      }
-      document.body.classList.remove('header-dropdown-open', 'block-cart-open');
-      return true;
-    });
-  };
+const cartPreviewController = () => {
+  const {
+    cartPreviewBtn,
+    cartPreview,
+    cartPreviewContent,
+    cartDropdownClose
+  } = selectorsMap;
 
   const showModal = (modalHtml) => {
     const getBlockCartModalElement = () => document.querySelector('#blockcart-modal');
@@ -40,21 +30,11 @@ function initShoppingCart() {
     bootstrap.Modal.getOrCreateInstance(newModal).show();
   };
 
-  bindEvents();
-
-  const handleModalErrorToggle = (resp) => {
-    const errorModal = document.querySelector('#blockcart-error');
-    const alertBlock = document.querySelector('.js-blockcart-alert');
-
-    alertBlock.innerHTML = resp.errors.join('<br/>');
-    bootstrap.Modal.getOrCreateInstance(errorModal).show();
-  };
-
   const handleUpdateCartBlock = (resp) => {
-    const previewHtml = parseToHtml(resp.preview).querySelector('.js-blockcart');
+    const previewHtml = parseToHtml(resp.preview).querySelector('.js-cart-preview');
 
     if (previewHtml) {
-      document.querySelector('.js-blockcart').replaceWith(previewHtml);
+      document.querySelector('.js-cart-preview').replaceWith(previewHtml);
     }
 
     if (resp.modal) {
@@ -64,27 +44,18 @@ function initShoppingCart() {
     prestashop.emit('updatedBlockCart', resp);
 
     if (document.body.classList.contains('block-cart-open')) {
-      const dropdown = document.body.querySelector('.js-blockcart [data-toggle="dropdown"]');
+      const dropdown = document.body.querySelector('.js-cart-preview [data-toggle="dropdown"]');
 
       if (dropdown) {
         bootstrap.Dropdown.getOrCreateInstance(dropdown).show();
       }
     }
-
-    bindEvents();
-
-    document.body.classList.remove('cart-loading');
   };
 
   const handleUpdateCart = (event) => {
-    const refreshURL = document.querySelector('.js-blockcart')?.dataset?.refreshUrl;
+    const refreshURL = document.querySelector('.js-cart-preview')?.dataset?.refreshUrl;
 
     if (!refreshURL) {
-      return;
-    }
-
-    if (event && event.resp && event.resp.hasError) {
-      handleModalErrorToggle(event.resp);
       return;
     }
 
@@ -107,9 +78,20 @@ function initShoppingCart() {
       });
   };
 
-  prestashop.on('updateCart', handleUpdateCart);
+  const init = () => {
+    prestashop.on('updateCart', updateCartHandler);
+
+    each(cartDropdownClose, (el) => {
+      eventHandlerOn(el, 'click', closePreviewDropdownHandler);
+    });
+  }
+
+  return {
+    init
+  }
 }
 
 DOMReady(() => {
-  initShoppingCart();
+  const { init } = cartPreviewController();
+  init();
 });

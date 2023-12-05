@@ -1,7 +1,6 @@
 imports:
   - { resource: ../common.yml }
 
-
 services:
   _defaults:
     public: false
@@ -17,3 +16,10 @@ services:
       - '../../src/{Controller,Form}'
       - '../../src/index.php'
       - '../../src/*/index.php'
+
+  Oksydan\IsShoppingcart\Hook\:
+    resource: '../../src/Hook/*'
+    public: true
+    exclude:
+      - '../../src/Hook/index.php'
+      - '../../src/Hook/*/index.php'

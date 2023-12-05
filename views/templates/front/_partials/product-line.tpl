@@ -19,7 +19,7 @@
 
 <div class="cart-products">
     <div class="cart-products__thumb">
-        {images_block webpEnabled=$webpEnabled}
+      {images_block}
         <img
           {if $product.default_image}
             {generateImagesSources image=$product.default_image size='cart_default'}
@@ -30,7 +30,7 @@
           class="img-fluid rounded"
           width="{$product.default_image.bySize.cart_default.width}"
           height="{$product.default_image.bySize.cart_default.height}">
-        {/images_block}
+      {/images_block}
     </div>
     <div class="cart-products__desc">
         <p class="h6 mb-2 font-sm">
@@ -55,7 +55,9 @@
         </span>
     </div>
     <div class="cart-products__remove">
-        <a class="remove-from-cart text-danger" rel="nofollow" href="{$product.remove_from_cart_url}"
+        <a  class="js-remove-from-cart remove-from-cart text-danger"
+            rel="nofollow"
+            href="{$product.remove_from_cart_url}"
             data-link-action="delete-from-cart" data-id-product="{$product.id_product|escape:'javascript'}"
             data-id-product-attribute="{$product.id_product_attribute|escape:'javascript'}"
             data-id-customization="{$product.id_customization|escape:'javascript'}">

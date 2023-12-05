@@ -8,7 +8,7 @@
 
   <div class="cart-products p-0 mb-4">
     <div class="cart-products__thumb">
-      {images_block webpEnabled=$webpEnabled}
+      {images_block}
         <img
           class="img-fluid rounded"
           {generateImagesSources image=$product.default_image size='cart_default'}

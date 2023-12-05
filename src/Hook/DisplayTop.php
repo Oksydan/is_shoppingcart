@@ -18,8 +18,9 @@ class DisplayTop extends AbstractDisplayHook
     protected function assignTemplateVariables(array $params)
     {
         $this->context->smarty->assign([
+            'notificationType' => $this->shoppingCartConfiguration->getCartNotificationType(),
+            'previewType' => $this->shoppingCartConfiguration->getCartPreviewType(),
             'cart' => (new CartPresenter())->present(isset($params['cart']) ? $params['cart'] : $this->context->cart),
-            'refresh_url' => $this->context->link->getModuleLink($this->module->name, 'ajax', [], null, null, null, true),
             'cart_url' => $this->context->link->getPageLink(
                 'cart',
                 null,

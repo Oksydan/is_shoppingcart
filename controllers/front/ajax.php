@@ -1,35 +1,26 @@
 <?php
 
+use Oksydan\IsShoppingcart\View\PreviewRender;
 use PrestaShop\PrestaShop\Adapter\Presenter\Cart\CartPresenter;
 
-class Is_ShoppingcartAjaxModuleFrontController extends ModuleFrontController
+class Is_shoppingcartAjaxModuleFrontController extends ModuleFrontController
 {
     /**
-     * @var bool
-     */
-    public $ssl = true;
-
-    /**
-     * @see FrontController::displayAjax()
+     * @see FrontController::displayAjaxGetCartPreview()
      *
      * @return void
      */
-    public function displayAjax(): void
+    public function displayAjaxGetCartPreview(): void
     {
-        $modal = null;
+        xdebug_break();
+        $previewContentRender = $this->get(PreviewRender::class);
+        $previewBtnRender = $this->get(PreviewRender::class);
 
-        if ($this->module instanceof Is_Shoppingcart && Tools::getValue('action') === 'add-to-cart') {
-            $modal = $this->renderModal(
-                $this->context->cart,
-                (int) Tools::getValue('id_product'),
-                (int) Tools::getValue('id_product_attribute'),
-                (int) Tools::getValue('id_customization')
-            );
-        }
+        header('Content-Type: application/json');
 
         $this->ajaxRender(json_encode([
-            'preview' => $this->module instanceof Is_Shoppingcart ? $this->module->hookDisplayTop(['cart' => $this->context->cart]) : '',
-            'modal' => $modal,
+            'previewContent' => $previewContentRender->render($this->context->cart),
+            'previewBtn' => $previewBtnRender->render($this->context->cart),
         ]));
     }
 

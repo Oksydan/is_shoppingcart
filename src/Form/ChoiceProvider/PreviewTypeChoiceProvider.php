@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Oksydan\IsShoppingcart\Form\ChoiceProvider;
 
+use Oksydan\IsShoppingcart\Configuration\PreviewTypes;
 use Oksydan\IsShoppingcart\Translations\TranslationDomains;
 use PrestaShop\PrestaShop\Core\Form\FormChoiceProviderInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -11,11 +12,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class PreviewTypeChoiceProvider implements FormChoiceProviderInterface
 {
     private TranslatorInterface $translator;
-
-    public const TYPES = [
-        'dropdown',
-        'offcanvas',
-    ];
 
     public function __construct(
         TranslatorInterface $translator
@@ -30,7 +26,7 @@ class PreviewTypeChoiceProvider implements FormChoiceProviderInterface
     {
         $choices = [];
 
-        foreach (self::TYPES as $type) {
+        foreach (PreviewTypes::getTypes() as $type) {
             $choices[$this->getLabelByType($type)] = $type;
         }
 
@@ -40,9 +36,9 @@ class PreviewTypeChoiceProvider implements FormChoiceProviderInterface
     private function getLabelByType(string $type): string
     {
         switch ($type) {
-            case 'dropdown':
+            case PreviewTypes::PREVIEW_TYPE_DROPDOWN:
                 return $this->translator->trans('Dropdown', [], TranslationDomains::TRANSLATION_DOMAIN_ADMIN);
-            case 'offcanvas':
+            case PreviewTypes::PREVIEW_TYPE_OFFCANVAS:
                 return $this->translator->trans('Offcanvas cart', [], TranslationDomains::TRANSLATION_DOMAIN_ADMIN);
             default:
                 throw new \InvalidArgumentException(sprintf('Unknown type "%s"', $type));
