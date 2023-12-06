@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Oksydan\IsShoppingcart\View;
 
-use Oksydan\IsShoppingcart\Configuration\ShoppingCartConfiguration;
-use PrestaShop\PrestaShop\Adapter\Presenter\Cart\CartPresenter;
-
 class PreviewBtnRender implements PreviewRenderInterface
 {
     private const TEMPLATE = 'header-btn.tpl';
@@ -15,34 +12,20 @@ class PreviewBtnRender implements PreviewRenderInterface
 
     private \Is_shoppingcart $module;
 
-    private ShoppingCartConfiguration $shoppingCartConfiguration;
-
     public function __construct(
         \Context $context,
-        \Is_shoppingcart $module,
-        ShoppingCartConfiguration $shoppingCartConfiguration
-    )
-    {
+        \Is_shoppingcart $module
+    ) {
         $this->context = $context;
         $this->module = $module;
-        $this->shoppingCartConfiguration = $shoppingCartConfiguration;
     }
 
-
-    public function render(\Cart $cart): string
+    public function render(): string
     {
-        $this->assignVariables($cart);
+        $template = self::TEMPLATE;
 
         return $this->context->smarty->fetch(
-            "module:{$this->module->name}/views/templates/front/{self::TEMPLATE}"
+            "module:{$this->module->name}/views/templates/front/{$template}"
         );
-    }
-
-    private function assignVariables(\Cart $cart)
-    {
-        $this->context->assign([
-            'previewType' => $this->shoppingCartConfiguration->getCartPreviewType(),
-            'cart' => $this->context->smarty->getTemplateVars('cart') ?? (new CartPresenter())->present($cart),
-        ]);
     }
 }

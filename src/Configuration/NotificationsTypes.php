@@ -12,12 +12,15 @@ class NotificationsTypes
 
     public const NOTIFICATION_TYPE_NONE = 'none';
 
+    public const NOTIFICATION_TYPE_OPEN_PREVIEW = 'open_preview';
+
     public static function getTypes(): array
     {
         return [
             self::NOTIFICATION_TYPE_TOAST,
             self::NOTIFICATION_TYPE_MODAL,
             self::NOTIFICATION_TYPE_NONE,
+            self::NOTIFICATION_TYPE_OPEN_PREVIEW,
         ];
     }
 }

@@ -48,6 +48,8 @@ class NotificationTypeChoiceProvider implements FormChoiceProviderInterface
                 return $this->translator->trans('Floating toast', [], TranslationDomains::TRANSLATION_DOMAIN_ADMIN);
             case NotificationsTypes::NOTIFICATION_TYPE_NONE:
                 return $this->translator->trans('No notification', [], TranslationDomains::TRANSLATION_DOMAIN_ADMIN);
+            case NotificationsTypes::NOTIFICATION_TYPE_OPEN_PREVIEW:
+                return $this->translator->trans('Open cart preview', [], TranslationDomains::TRANSLATION_DOMAIN_ADMIN);
             default:
                 throw new \InvalidArgumentException(sprintf('Unknown type "%s"', $type));
         }

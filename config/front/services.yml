@@ -23,3 +23,18 @@ services:
     exclude:
       - '../../src/Hook/index.php'
       - '../../src/Hook/*/index.php'
+
+  Oksydan\IsShoppingcart\View\:
+    resource: '../../src/View/*'
+    public: true
+    exclude:
+      - '../../src/View/index.php'
+      - '../../src/View/*/index.php'
+
+  Oksydan\IsShoppingcart\Configuration\ShoppingCartConfiguration:
+    class: Oksydan\IsShoppingcart\Configuration\ShoppingCartConfiguration
+    public: true
+
+  Oksydan\IsShoppingcart\Persister\TemplateVarsPersister:
+    class: Oksydan\IsShoppingcart\Persister\TemplateVarsPersister
+    public: true

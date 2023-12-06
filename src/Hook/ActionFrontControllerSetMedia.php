@@ -6,7 +6,6 @@ namespace Oksydan\IsShoppingcart\Hook;
 
 class ActionFrontControllerSetMedia extends AbstractHook
 {
-
     public function execute(array $params)
     {
         \Media::addJsDef([
@@ -16,5 +15,4 @@ class ActionFrontControllerSetMedia extends AbstractHook
             ]),
         ]);
     }
-
 }

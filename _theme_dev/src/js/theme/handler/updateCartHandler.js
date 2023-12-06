@@ -1,7 +1,6 @@
-import updatePreviewCartRequest from "../request/updatePreviewCartRequest";
+import updatePreviewCartRequest from '../request/updatePreviewCartRequest';
 
 const updateCartHandler = (event) => {
-  debugger
   if (!event?.reason || !event?.resp || event?.resp?.hasError) {
     return;
   }
@@ -10,11 +9,11 @@ const updateCartHandler = (event) => {
     id_customization: event.reason.idCustomization,
     id_product_attribute: event.reason.idProductAttribute,
     id_product: event.reason.idProduct,
-    action: event.reason.linkAction,
+    'cart-action': event.reason.linkAction,
   };
 
   // refreshCartPreviewUrl is defined as a global variable in the module
-  const { getRequest } = updatePreviewCartRequest(refreshCartPreviewUrl, payload);
+  const { getRequest } = updatePreviewCartRequest(window.refreshCartPreviewUrl, payload);
 
   getRequest()
     .then((resp) => {
@@ -23,6 +22,6 @@ const updateCartHandler = (event) => {
     .catch((resp) => {
       prestashop.emit('handleError', { eventType: 'updateShoppingCart', resp });
     });
-}
+};
 
 export default updateCartHandler;

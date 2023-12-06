@@ -1,5 +1,5 @@
 <div
-  class="dropdown-menu cart-preview-dropdown cart-dropdown p-0 dropdown-menu-end"
+  class="js-preview-cart-dropdown dropdown-menu cart-preview-dropdown cart-dropdown p-0 dropdown-menu-end"
   id="blockcart-dropdown"
   aria-labelledby="cartDropdown"
 >

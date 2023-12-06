@@ -6,7 +6,6 @@ namespace Oksydan\IsShoppingcart\View;
 
 use Oksydan\IsShoppingcart\Configuration\PreviewTypes;
 use Oksydan\IsShoppingcart\Configuration\ShoppingCartConfiguration;
-use PrestaShop\PrestaShop\Adapter\Presenter\Cart\CartPresenter;
 
 class PreviewRender implements PreviewRenderInterface
 {
@@ -23,29 +22,17 @@ class PreviewRender implements PreviewRenderInterface
         \Context $context,
         \Is_shoppingcart $module,
         ShoppingCartConfiguration $shoppingCartConfiguration
-    )
-    {
+    ) {
         $this->context = $context;
         $this->module = $module;
         $this->shoppingCartConfiguration = $shoppingCartConfiguration;
     }
 
-
-    public function render(\Cart $cart): string
+    public function render(): string
     {
-        $this->assignVariables($cart);
-
         return $this->context->smarty->fetch(
             "module:{$this->module->name}/views/templates/front/{$this->getTemplate()}"
         );
-    }
-
-    private function assignVariables(\Cart $cart)
-    {
-        $this->context->assign([
-            'previewType' => $this->shoppingCartConfiguration->getCartPreviewType(),
-            'cart' => $this->context->smarty->getTemplateVars('cart') ?? (new CartPresenter())->present($cart),
-        ]);
     }
 
     private function getTemplate(): string

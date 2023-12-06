@@ -2,20 +2,25 @@
 
 {block name='modal_extra_attribues'}id="blockcart-modal"{/block}
 {block name='modal_title'}{l s='Product added to cart' d='Modules.Isshoppingcart.Modalsuccess'}{/block}
-
+{block name='modal_extra_class'}js-cart-notification-modal{/block}
 
 {block name='modal_body'}
 
   <div class="cart-products p-0 mb-4">
-    <div class="cart-products__thumb">
-      {images_block}
-        <img
-          class="img-fluid rounded"
-          {generateImagesSources image=$product.default_image size='cart_default'}
-          alt="{$product.cover.legend}"
-          title="{$product.cover.legend}">
-      {/images_block}
-    </div>
+    {if $product.default_image}
+      <div class="cart-products__thumb">
+          {images_block}
+            <img
+              class="img-fluid rounded"
+              {generateImagesSources image=$product.default_image size='cart_default'}
+              alt="{$product.default_image.legend}"
+              title="{$product.default_image.legend}"
+              width="{$product.default_image.bySize.cart_default.width}"
+              height="{$product.default_image.bySize.cart_default.height}"
+            >
+          {/images_block}
+      </div>
+    {/if}
     <div class="cart-products__desc">
         <p class="h6 mb-2 font-sm">
           {$product.name}

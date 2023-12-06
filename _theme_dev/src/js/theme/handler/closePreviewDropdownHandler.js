@@ -11,6 +11,6 @@ const closePreviewDropdownHandler = (e) => {
       bootstrap.Dropdown.getOrCreateInstance(dropdown).hide();
     }
   }
-}
+};
 
 export default closePreviewDropdownHandler;

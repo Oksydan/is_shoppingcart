@@ -6,5 +6,5 @@ namespace Oksydan\IsShoppingcart\View;
 
 interface PreviewRenderInterface
 {
-    public function render(\Cart $cart): string;
+    public function render(): string;
 }
