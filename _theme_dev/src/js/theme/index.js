@@ -1,115 +1,70 @@
-function initShoppingCart() {
-  const bindEvents = () => {
-    const blockCart = document.querySelector('.js-blockcart');
+import { DOMReady, each } from '@js/utils/DOM/DOMHelpers';
+import { on } from '@js/utils/event/eventHandler';
+import selectorsMap from './selectors/selectorsMap';
+import closePreviewDropdownHandler from './handler/closePreviewDropdownHandler';
+import updateCartHandler from './handler/updateCartHandler';
+import updateCartPreviewHandler from './handler/updateCartPreviewHandler';
+import openNotificationHandler from './handler/openNotificationHandler';
 
-    // blockCart.addEventListener('show.bs.dropdown', () => { Change to vanilla js when bootstrap 5 is adopted
-    eventHandlerOn(blockCart, 'show.bs.dropdown', () => {
-      document.body.classList.add('header-dropdown-open', 'block-cart-open');
+/**
+ * Controller for managing the cart preview functionality.
+ *
+ * @function
+ * @name cartPreviewController
+ * @returns {Object} An object with an initialization function.
+ */
+const cartPreviewController = () => {
+  const {
+    cartDropdownClose,
+  } = selectorsMap;
+
+  /**
+   * Initializes the cart preview controller by setting up event listeners and handlers.
+   *
+   * @function
+   * @name init
+   */
+  const init = () => {
+    prestashop.on('updateCart', updateCartHandler);
+
+    /**
+     * Handles the updated cart preview and triggers relevant actions.
+     *
+     * @function
+     * @param {Object} res - The response object containing updated cart preview data.
+     * @param {string} res.previewBtn - The HTML string for updating the cart preview button.
+     * @param {string} res.previewContent - The HTML string for updating the cart preview content.
+     * @param {string} res.notificationType - The type of notification to be displayed.
+     * @param {string} res.notificationContent - The content of the notification.
+     * @param {string} res.previewType - The type of preview to be opened.
+     */
+    prestashop.on('updatedCartPreview', (res) => {
+      updateCartPreviewHandler(res.previewBtn, res.previewContent);
+      openNotificationHandler(res.notificationType, res.notificationContent, res.previewType);
     });
 
-    // blockCart.addEventListener('hide.bs.dropdown', (e) => { Change to vanilla js when bootstrap 5 is adopted
-    eventHandlerOn(blockCart, 'hide.bs.dropdown', (e) => {
-      const { target } = e;
-      if (!target.classList.contains('dropdown-close')
-        && (target.classList.contains('keep-open') || target.closest('.keep-open')
-          || (e.clickEvent && e.clickEvent.target.closest('.keep-open')))) {
-        return false; // returning false should stop the dropdown from hiding.
-      }
-      document.body.classList.remove('header-dropdown-open', 'block-cart-open');
-      return true;
-    });
-  };
-
-  const showModal = (modalHtml) => {
-    const getBlockCartModalElement = () => document.querySelector('#blockcart-modal');
-
-    const currentModal = getBlockCartModalElement();
-
-    if (currentModal) {
-      bootstrap.Modal.getOrCreateInstance(currentModal).hide();
-    }
-
-    document.body.append(parseToHtml(modalHtml));
-
-    const newModal = getBlockCartModalElement();
-
-    eventHandlerOn(newModal, 'hidden.bs.modal', (e) => {
-      e.target.remove();
-    });
-
-    bootstrap.Modal.getOrCreateInstance(newModal).show();
-  };
-
-  bindEvents();
-
-  const handleModalErrorToggle = (resp) => {
-    const errorModal = document.querySelector('#blockcart-error');
-    const alertBlock = document.querySelector('.js-blockcart-alert');
-
-    alertBlock.innerHTML = resp.errors.join('<br/>');
-    bootstrap.Modal.getOrCreateInstance(errorModal).show();
-  };
-
-  const handleUpdateCartBlock = (resp) => {
-    const previewHtml = parseToHtml(resp.preview).querySelector('.js-blockcart');
-
-    if (previewHtml) {
-      document.querySelector('.js-blockcart').replaceWith(previewHtml);
-    }
-
-    if (resp.modal) {
-      showModal(resp.modal);
-    }
-
-    prestashop.emit('updatedBlockCart', resp);
-
-    if (document.body.classList.contains('block-cart-open')) {
-      const dropdown = document.body.querySelector('.js-blockcart [data-toggle="dropdown"]');
-
-      if (dropdown) {
-        bootstrap.Dropdown.getOrCreateInstance(dropdown).show();
-      }
-    }
-
-    bindEvents();
-
-    document.body.classList.remove('cart-loading');
-  };
-
-  const handleUpdateCart = (event) => {
-    const refreshURL = document.querySelector('.js-blockcart')?.dataset?.refreshUrl;
-
-    if (!refreshURL) {
-      return;
-    }
-
-    if (event && event.resp && event.resp.hasError) {
-      handleModalErrorToggle(event.resp);
-      return;
-    }
-
-    const requestData = {
-      id_customization: event.reason.idCustomization,
-      id_product_attribute: event.reason.idProductAttribute,
-      id_product: event.reason.idProduct,
-      action: event.reason.linkAction,
-      ajax: 1,
+    /**
+     * Attaches click event handlers to close buttons in the cart preview dropdown.
+     *
+     * @function
+     * @name attachCloseHandlers
+     */
+    const attachCloseHandlers = () => {
+      each(cartDropdownClose, (el) => {
+        on(el, 'click', closePreviewDropdownHandler);
+      });
     };
 
-    const { request } = useHttpRequest(refreshURL);
-
-    request
-      .query(requestData)
-      .post()
-      .json(handleUpdateCartBlock)
-      .error((resp) => {
-        prestashop.emit('handleError', { eventType: 'updateShoppingCart', resp });
-      });
+    // Attach close handlers on initialization
+    attachCloseHandlers();
   };
 
-  prestashop.on('updateCart', handleUpdateCart);
-}
+  return {
+    init,
+  };
+};
 
 DOMReady(() => {
-  initShoppingCart();
+  const { init } = cartPreviewController();
+  init();
 });

@@ -55,7 +55,6 @@ class Is_shoppingcart extends Module
     public function installHooks(): bool
     {
         return $this->registerHook('displayTop')
-            && $this->registerHook('displayBeforeBodyClosingTag')
             && $this->registerHook('actionFrontControllerSetMedia');
     }
 

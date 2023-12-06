@@ -1,35 +1,53 @@
 <?php
 
+use Oksydan\IsShoppingcart\Configuration\ShoppingCartConfiguration;
+use Oksydan\IsShoppingcart\DTO\CartProductDTO;
+use Oksydan\IsShoppingcart\Persister\TemplateVarsPersister;
+use Oksydan\IsShoppingcart\View\NotificationRender;
+use Oksydan\IsShoppingcart\View\PreviewBtnRender;
+use Oksydan\IsShoppingcart\View\PreviewRender;
 use PrestaShop\PrestaShop\Adapter\Presenter\Cart\CartPresenter;
 
-class Is_ShoppingcartAjaxModuleFrontController extends ModuleFrontController
+class Is_shoppingcartAjaxModuleFrontController extends ModuleFrontController
 {
     /**
-     * @var bool
-     */
-    public $ssl = true;
-
-    /**
-     * @see FrontController::displayAjax()
+     * @see FrontController::displayAjaxGetCartPreview()
      *
      * @return void
      */
-    public function displayAjax(): void
+    public function displayAjaxGetCartPreview(): void
     {
-        $modal = null;
+        $previewContentRender = $this->get(PreviewRender::class);
+        $previewBtnRender = $this->get(PreviewBtnRender::class);
+        $notificationRender = $this->get(NotificationRender::class);
+        $moduleConfiguration = $this->get(ShoppingCartConfiguration::class);
+        $templateVarsPersister = $this->get(TemplateVarsPersister::class);
 
-        if ($this->module instanceof Is_Shoppingcart && Tools::getValue('action') === 'add-to-cart') {
-            $modal = $this->renderModal(
-                $this->context->cart,
+        if (Tools::getValue('cart-action') === 'add-to-cart') {
+            $cartProductDTO = new CartProductDTO(
                 (int) Tools::getValue('id_product'),
                 (int) Tools::getValue('id_product_attribute'),
                 (int) Tools::getValue('id_customization')
             );
+        } else {
+            $cartProductDTO = new CartProductDTO(
+                0,
+                0,
+                0
+            );
         }
 
+        $templateVarsPersister->persist($cartProductDTO);
+
+        ob_end_clean();
+        header('Content-Type: application/json');
+
         $this->ajaxRender(json_encode([
-            'preview' => $this->module instanceof Is_Shoppingcart ? $this->module->hookDisplayTop(['cart' => $this->context->cart]) : '',
-            'modal' => $modal,
+            'previewContent' => $previewContentRender->render(),
+            'previewBtn' => $previewBtnRender->render(),
+            'previewType' => $moduleConfiguration->getCartPreviewType(),
+            'notificationType' => $moduleConfiguration->getCartNotificationType(),
+            'notificationContent' => $notificationRender->render(),
         ]));
     }
 

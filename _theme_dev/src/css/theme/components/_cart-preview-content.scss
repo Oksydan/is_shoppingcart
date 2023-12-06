@@ -1,0 +1,14 @@
+
+.cart-preview-content {
+  $self: &;
+
+  &--dropdown {
+    #{$self} {
+      &__products {
+        max-height: rem-calc(300px);
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+    }
+  }
+}
