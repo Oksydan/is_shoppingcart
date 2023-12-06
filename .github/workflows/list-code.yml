@@ -22,3 +22,6 @@ jobs:
 
       - name: Eslint action
         run: cd ./_theme_dev && npm run js-lint
+
+      - name: Scss lint action
+        run: cd ./_theme_dev && npm run scss-lint
