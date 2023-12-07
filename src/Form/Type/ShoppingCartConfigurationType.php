@@ -9,7 +9,6 @@ use Oksydan\IsShoppingcart\Form\ChoiceProvider\NotificationTypeChoiceProvider;
 use Oksydan\IsShoppingcart\Form\ChoiceProvider\PreviewTypeChoiceProvider;
 use Oksydan\IsShoppingcart\Translations\TranslationDomains;
 use PrestaShopBundle\Form\Admin\Type\MultistoreConfigurationType;
-use PrestaShopBundle\Form\Admin\Type\SwitchType;
 use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -39,11 +38,6 @@ class ShoppingCartConfigurationType extends TranslatorAwareType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('ajaxCartEnabled', SwitchType::class, [
-                'label' => $this->trans('Ajax cart', TranslationDomains::TRANSLATION_DOMAIN_ADMIN),
-                'help' => $this->trans('Activate Ajax mode for the cart.', TranslationDomains::TRANSLATION_DOMAIN_ADMIN),
-                'multistore_configuration_key' => ShoppingCartConfiguration::IS_BLOCK_CART_AJAX,
-            ])
             ->add('notificationType', ChoiceType::class, [
                 'label' => $this->trans('Type of notification', TranslationDomains::TRANSLATION_DOMAIN_ADMIN),
                 'choices' => $this->notificationTypeChoiceProvider->getChoices(),
