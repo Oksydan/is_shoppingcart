@@ -4,9 +4,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Oksydan\IsShoppingcart\Configuration\ShoppingCartConfiguration;
-use Oksydan\IsShoppingcart\Configuration\PreviewTypes;
 use Oksydan\IsShoppingcart\Configuration\NotificationsTypes;
+use Oksydan\IsShoppingcart\Configuration\PreviewTypes;
+use Oksydan\IsShoppingcart\Configuration\ShoppingCartConfiguration;
 
 function upgrade_module_4_0_0($module)
 {
