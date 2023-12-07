@@ -36,11 +36,6 @@ final class ShoppingCartConfigurationHandler extends AbstractMultistoreConfigura
         $return = [];
         $shopConstraint = $this->getShopConstraint();
 
-        $return['ajaxCartEnabled'] = $this->configuration->get(
-            ShoppingCartConfiguration::IS_BLOCK_CART_AJAX,
-            null,
-            $shopConstraint
-        );
         $return['notificationType'] = $this->configuration->get(
             ShoppingCartConfiguration::IS_CART_NOTIFICATION_TYPE,
             null,
@@ -61,13 +56,6 @@ final class ShoppingCartConfigurationHandler extends AbstractMultistoreConfigura
     public function updateConfiguration(array $configuration): array
     {
         $shopConstraint = $this->getShopConstraint();
-
-        $this->updateConfigurationValue(
-            ShoppingCartConfiguration::IS_BLOCK_CART_AJAX,
-            'ajaxCartEnabled',
-            $configuration,
-            $shopConstraint
-        );
 
         $this->updateConfigurationValue(
             ShoppingCartConfiguration::IS_CART_NOTIFICATION_TYPE,
