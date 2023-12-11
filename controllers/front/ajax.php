@@ -6,7 +6,6 @@ use Oksydan\IsShoppingcart\Persister\TemplateVarsPersister;
 use Oksydan\IsShoppingcart\View\NotificationRender;
 use Oksydan\IsShoppingcart\View\PreviewBtnRender;
 use Oksydan\IsShoppingcart\View\PreviewRender;
-use PrestaShop\PrestaShop\Adapter\Presenter\Cart\CartPresenter;
 
 class Is_shoppingcartAjaxModuleFrontController extends ModuleFrontController
 {
